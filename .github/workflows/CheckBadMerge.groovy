@@ -30,6 +30,7 @@ import java.util.concurrent.Future
  * If any "bad" merge commit is found, it will print the details and exit with non-zero code.
  */
 class CheckBadMerge {
+    def Executors
     private static final THREAD_POOL = Executors.newCachedThreadPool()
 
     private static final List<String> MONITORED_FILES = [
@@ -83,7 +84,7 @@ class CheckBadMerge {
      * If any line is only present on `releaseX` version, then it's a bad file.
      * Also, we ignore empty lines.
      */
-    static boolean isBadFileInMergeCommit(String filePath, String mergeCommit, String masterCommit, String releaseCommit) {
+    static boolean isBadFileInMergeCommit(Map attrs, String filePath, String mergeCommit, String masterCommit, String releaseCommit) {
         try {
             List<String> mergeCommitFileLines = showFileOnCommit(mergeCommit, filePath).readLines()
             List<String> masterCommitFileLines = showFileOnCommit(masterCommit, filePath).readLines()
@@ -97,7 +98,7 @@ class CheckBadMerge {
                     return true
                 }
             }
-        } catch (AbortException ignore) {
+        } catch () {
             return false
         }
         return false
